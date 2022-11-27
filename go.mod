@@ -4,13 +4,23 @@ go 1.18
 
 require (
 	github.com/go-chi/chi/v5 v5.0.7
+	github.com/golang-migrate/migrate/v4 v4.15.2
 	github.com/jackc/pgx/v4 v4.17.2
 	github.com/joho/godotenv v1.4.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/regismelgaco/go-sdks/auth v0.0.0-20221127113222-947ccd31e2bf
-	github.com/regismelgaco/go-sdks/erring v0.0.0-20221127002404-4d857029b5be
+	github.com/regismelgaco/go-sdks/erring v0.0.0-20221127113222-947ccd31e2bf
 	github.com/regismelgaco/go-sdks/httpresp v0.0.0-20221127002404-4d857029b5be
+	github.com/regismelgaco/go-sdks/postgres v0.0.0-20221127111856-6d7dbef29dd4
+	github.com/stretchr/testify v1.8.1
+	go.uber.org/zap v1.23.0
 )
+
+replace github.com/regismelgaco/go-sdks/auth => ../go-sdks/auth
+
+replace github.com/regismelgaco/go-sdks/httpresp => ../go-sdks/httpresp
+
+replace github.com/regismelgaco/go-sdks/erring => ../go-sdks/erring
 
 require (
 	github.com/Azure/go-ansiterm v0.0.0-20210617225240-d185dfc1b5a1 // indirect
@@ -22,7 +32,6 @@ require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/docker/go-units v0.5.0 // indirect
-	github.com/golang-migrate/migrate/v4 v4.15.2 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
@@ -41,10 +50,9 @@ require (
 	github.com/ory/dockertest v3.3.5+incompatible // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/regismelgaco/go-sdks/postgres v0.0.0-20221127111856-6d7dbef29dd4 // indirect
 	github.com/sirupsen/logrus v1.8.1 // indirect
-	github.com/stretchr/testify v1.8.1 // indirect
-	go.uber.org/atomic v1.7.0 // indirect
+	go.uber.org/atomic v1.10.0 // indirect
+	go.uber.org/multierr v1.8.0 // indirect
 	golang.org/x/crypto v0.3.0 // indirect
 	golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4 // indirect
 	golang.org/x/net v0.2.0 // indirect
