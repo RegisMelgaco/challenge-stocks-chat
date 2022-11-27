@@ -3,19 +3,19 @@ package http
 import (
 	"encoding/json"
 	"local/challengestockschat/stockschat/config"
-	"local/challengestockschat/stockschat/gateway/http/handler/auth"
 	"net/http"
 	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/jackc/pgx/v4/pgxpool"
+	authHandler "github.com/regismelgaco/go-sdks/auth/auth/gateway/http/handler"
 )
 
 func SetupRouter(pool *pgxpool.Pool, cfg config.Config) chi.Router {
 	r := chi.NewRouter()
 
-	authHandler := auth.NewHandler(pool, cfg.JWTSecret)
+	authHandler := authHandler.NewHandler(pool, cfg.JWTSecret)
 
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
