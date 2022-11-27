@@ -1,0 +1,21 @@
+version: "3.9"
+services:
+  api:
+    build: .
+    ports:
+      - 3000:3000
+    environment:
+      HOST: :3000
+      POSTGRES_CONN: postgres://postgres:postgres@postgres:5432/postgres?user=postgres&password=secret&sslmode=disable
+      JWT_SECRET: kzwu78a%-qp03**8+3*!q+4ykul&+1wbgg$24#f79%++72=5m)
+    depends_on:
+      - postgres
+  postgres:
+    image: postgres:13.3
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=secret
+
