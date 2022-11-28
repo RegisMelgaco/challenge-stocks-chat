@@ -5,21 +5,22 @@ import (
 	"local/challengestockschat/stockschat/usecase/chat"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/gorilla/websocket"
 	"github.com/jackc/pgx/v4/pgxpool"
-	"github.com/regismelgaco/go-sdks/httpresp"
 )
 
 type Handler struct {
-	u chat.Usecase
+	u        chat.Usecase
+	upgrader websocket.Upgrader
 }
 
 func NewHandler(pool *pgxpool.Pool) Handler {
 	repo := chatRepository.NewRepository(pool)
 	u := chat.NewUsecase(repo)
 
-	return Handler{u}
+	return Handler{u, websocket.Upgrader{}}
 }
 
 func (h Handler) Route(r chi.Router) {
-	r.Post("/message", httpresp.Handle(h.PostMessage))
+	r.Get("/listen", h.Listen)
 }

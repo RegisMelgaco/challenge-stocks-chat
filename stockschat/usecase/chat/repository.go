@@ -7,4 +7,5 @@ import (
 
 type Repository interface {
 	InsertMessage(context.Context, *chat.Message) error
+	ListMessages(ctx context.Context, limit int) ([]chat.Message, error)
 }
