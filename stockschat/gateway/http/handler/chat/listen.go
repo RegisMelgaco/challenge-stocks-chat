@@ -13,6 +13,7 @@ import (
 	"github.com/regismelgaco/go-sdks/httpresp"
 )
 
+// TODO: handle host origin
 func (h Handler) Listen(w http.ResponseWriter, r *http.Request) {
 	conn, err := h.upgrader.Upgrade(w, r, nil)
 	if err != nil {
