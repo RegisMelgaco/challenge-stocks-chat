@@ -23,13 +23,12 @@ func SetupRouter(logger *zap.Logger, pool *pgxpool.Pool, cfg config.Config) chi.
 
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
-	r.Use(middleware.Timeout(60 * time.Second))
 	r.Use(middleware.SetHeader(
 		"Content-type", "application/json",
 	))
 	r.Use(httpresp.Logger(logger))
 
-	r.Route("/auth", authHandler.SetupRoutes)
+	r.With(middleware.Timeout(5*time.Minute)).Route("/auth", authHandler.SetupRoutes)
 	r.With(authHandler.IsAuthorized).Route("/chat", chatHandler.Route)
 
 	r.With(authHandler.IsAuthorized).Get("/ping", func(w http.ResponseWriter, r *http.Request) {
