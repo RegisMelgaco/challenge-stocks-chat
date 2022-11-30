@@ -12,17 +12,18 @@ type Usecase interface {
 }
 
 type usecase struct {
-	repo Repository
+	repo   Repository
+	broker Broker
 	*listeners
 }
 
-func NewUsecase(repo Repository) Usecase {
+func NewUsecase(repo Repository, broker Broker) Usecase {
 	ls := listeners{
 		mux:  sync.Mutex{},
 		pool: make(map[*chat.Listener]interface{}),
 	}
 
-	u := usecase{repo, &ls}
+	u := usecase{repo, broker, &ls}
 
 	return u
 }

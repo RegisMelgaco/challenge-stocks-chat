@@ -18,9 +18,7 @@ import (
 func (h Handler) Listen(w http.ResponseWriter, r *http.Request) {
 	conn, err := h.upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		err = erring.Wrap(err).
-			Describe("failed to upgrade connection for listen request").
-			Build()
+		err = erring.Wrap(err).Describe("failed to upgrade connection for listen request")
 
 		httpresp.Internal(err).Handle(w, r)
 
@@ -33,12 +31,7 @@ func (h Handler) Listen(w http.ResponseWriter, r *http.Request) {
 		err := conn.WriteJSON(v1.ToMessangeOutput(m))
 
 		if err != nil {
-			errBuilder := erring.Wrap(err).
-				Describe("failed to write message")
-
-			errBuilder.Err().Log(logger, zap.ErrorLevel)
-
-			return errBuilder.Build()
+			return erring.Wrap(err).Log(logger, zap.ErrorLevel)
 		}
 
 		return nil
@@ -46,7 +39,7 @@ func (h Handler) Listen(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		conn.Close()
 
-		erring.Wrap(err).Err().Log(logger, zap.ErrorLevel)
+		_ = erring.Wrap(err).Log(logger, zap.ErrorLevel)
 
 		return
 	}
@@ -57,12 +50,9 @@ func (h Handler) Listen(w http.ResponseWriter, r *http.Request) {
 		message := websocket.FormatCloseMessage(code, "")
 		err := conn.WriteControl(websocket.CloseMessage, message, time.Now().Add(time.Second))
 		if err != nil {
-			errBuilder := erring.Wrap(err).
-				Describe("failed to write close control message")
-
-			errBuilder.Err().Log(logger, zap.ErrorLevel)
-
-			return errBuilder.Build()
+			return erring.Wrap(err).
+				Describe("failed to write close control message").
+				Log(logger, zap.ErrorLevel)
 		}
 
 		return nil
@@ -74,9 +64,9 @@ func (h Handler) Listen(w http.ResponseWriter, r *http.Request) {
 			if err := conn.ReadJSON(&input); err != nil {
 				conn.Close()
 
-				erring.Wrap(err).
+				_ = erring.Wrap(err).
 					Describe("failed to read message").
-					Err().Log(logger, zap.ErrorLevel)
+					Log(logger, zap.ErrorLevel)
 
 				break
 			}
@@ -85,9 +75,9 @@ func (h Handler) Listen(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				conn.Close()
 
-				erring.Wrap(err).
+				_ = erring.Wrap(err).
 					Describe("failed to encode message message as json").
-					Err().Log(logger, zap.ErrorLevel)
+					Log(logger, zap.ErrorLevel)
 
 				break
 			}
@@ -95,8 +85,7 @@ func (h Handler) Listen(w http.ResponseWriter, r *http.Request) {
 			if err := h.u.CreateMessage(context.Background(), &msg); err != nil {
 				conn.Close()
 
-				erring.Wrap(err).
-					Err().Log(logger, zap.ErrorLevel)
+				_ = erring.Wrap(err).Log(logger, zap.ErrorLevel)
 
 				break
 			}

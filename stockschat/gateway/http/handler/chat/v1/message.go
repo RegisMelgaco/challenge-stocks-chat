@@ -17,8 +17,7 @@ func (i InputMessage) ToEntity(ctx context.Context) (chat.Message, error) {
 	claims, err := handler.ClaimsFromContext(ctx)
 	if err != nil {
 		return chat.Message{}, erring.Wrap(err).
-			Describe("failed to get claims from context").
-			Build()
+			Describe("failed to get claims from context")
 	}
 
 	return chat.Message{

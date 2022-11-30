@@ -17,18 +17,14 @@ func (r repository) ListMessages(ctx context.Context, limit int) ([]chat.Message
 
 	rows, err := r.p.Query(ctx, sql, limit)
 	if err != nil {
-		return nil, erring.Wrap(err).
-			Describe("failed to select messages from db while listing").
-			Build()
+		return nil, erring.Wrap(err).Describe("failed to select messages from db while listing")
 	}
 
 	list := []chat.Message{}
 	for rows.Next() {
 		var msg chat.Message
 		if err := rows.Scan(&msg.Author, &msg.CreatedAt, &msg.Content); err != nil {
-			return nil, erring.Wrap(err).
-				Describe("failed to scan message row while listing").
-				Build()
+			return nil, erring.Wrap(err).Describe("failed to scan message row while listing")
 		}
 
 		list = append(list, msg)

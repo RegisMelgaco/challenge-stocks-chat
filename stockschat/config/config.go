@@ -1,7 +1,7 @@
 package config
 
 import (
-	"fmt"
+	"log"
 
 	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
@@ -18,15 +18,15 @@ type Config struct {
 func Load() (Config, error) {
 	err := godotenv.Load()
 	if err != nil {
-		err = erring.Wrap(err).Describe("failed while trying to load env vars").Build()
+		err = erring.Wrap(err).Describe("failed while trying to load env vars")
 
-		fmt.Println(err)
+		log.Println(err)
 	}
 
 	var cfg Config
 	err = envconfig.Process(".", &cfg)
 	if err != nil {
-		return Config{}, erring.Wrap(err).Describe("failed while loading configs").Build()
+		return Config{}, erring.Wrap(err).Describe("failed while loading configs")
 	}
 
 	return cfg, nil

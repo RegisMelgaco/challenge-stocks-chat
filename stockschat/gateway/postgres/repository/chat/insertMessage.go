@@ -15,9 +15,7 @@ func (r repository) InsertMessage(ctx context.Context, msg *chat.Message) error 
 	`
 	err := r.p.QueryRow(ctx, sql, msg.Author, msg.Content).Scan(&msg.CreatedAt)
 	if err != nil {
-		return erring.Wrap(err).
-			Describe("failed to write message to database").
-			Build()
+		return erring.Wrap(err).Describe("failed to write message to database")
 	}
 
 	return nil
