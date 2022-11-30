@@ -11,6 +11,7 @@ import (
 type Config struct {
 	Host         string `envconfig:"HOST" default:":3000"`
 	PostgresConn string `envconfig:"POSTGRES_CONN" required:"true"`
+	RabbitMQConn string `envconfig:"RABBIT_MQ_CONN" required:"true"`
 	JWTSecret    string `envconfig:"JWT_SECRET" required:"true"`
 	IsDev        bool   `envconfig:"IS_DEV"`
 }

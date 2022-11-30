@@ -14,9 +14,9 @@ type Handler struct {
 	upgrader websocket.Upgrader
 }
 
-func NewHandler(pool *pgxpool.Pool) Handler {
+func NewHandler(pool *pgxpool.Pool, broker chat.Broker) Handler {
 	repo := chatRepository.NewRepository(pool)
-	u := chat.NewUsecase(repo)
+	u := chat.NewUsecase(repo, broker)
 
 	return Handler{u, websocket.Upgrader{}}
 }

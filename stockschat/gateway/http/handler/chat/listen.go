@@ -82,7 +82,10 @@ func (h Handler) Listen(w http.ResponseWriter, r *http.Request) {
 				break
 			}
 
-			if err := h.u.CreateMessage(context.Background(), &msg); err != nil {
+			ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(5*time.Minute))
+			defer cancel()
+
+			if err := h.u.CreateMessage(ctx, &msg); err != nil {
 				conn.Close()
 
 				_ = erring.Wrap(err).Log(logger, zap.ErrorLevel)
