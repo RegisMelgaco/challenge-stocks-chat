@@ -5,12 +5,14 @@ go 1.18
 require (
 	github.com/go-chi/chi/v5 v5.0.7
 	github.com/golang-migrate/migrate/v4 v4.15.2
+	github.com/gorilla/websocket v1.5.0
 	github.com/jackc/pgx/v4 v4.17.2
 	github.com/joho/godotenv v1.4.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/regismelgaco/go-sdks/auth v0.0.0-20221127113222-947ccd31e2bf
 	github.com/regismelgaco/go-sdks/erring v0.0.0-20221127113222-947ccd31e2bf
 	github.com/regismelgaco/go-sdks/httpresp v0.0.0-20221127002404-4d857029b5be
+	github.com/regismelgaco/go-sdks/logger v0.0.0-20221130001832-6bee3bf25aea
 	github.com/regismelgaco/go-sdks/postgres v0.0.0-20221127111856-6d7dbef29dd4
 	github.com/stretchr/testify v1.8.1
 	go.uber.org/zap v1.23.0
@@ -22,6 +24,8 @@ replace github.com/regismelgaco/go-sdks/httpresp => ../go-sdks/httpresp
 
 replace github.com/regismelgaco/go-sdks/erring => ../go-sdks/erring
 
+replace github.com/regismelgaco/go-sdks/logger => ../go-sdks/logger
+
 require (
 	github.com/Azure/go-ansiterm v0.0.0-20210617225240-d185dfc1b5a1 // indirect
 	github.com/Microsoft/go-winio v0.6.0 // indirect
@@ -32,7 +36,6 @@ require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/docker/go-units v0.5.0 // indirect
-	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
