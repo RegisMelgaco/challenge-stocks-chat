@@ -1,8 +1,8 @@
-package chat_test
+package repository_test
 
 import (
 	"context"
-	"local/challengestockschat/stockschat/entity/chat"
+	"local/challengestockschat/stockschat/entity"
 	"testing"
 	"time"
 
@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func SeedMessageTable(t *testing.T, pool *pgxpool.Pool, msgs []chat.Message) {
+func SeedMessageTable(t *testing.T, pool *pgxpool.Pool, msgs []entity.Message) {
 	const sql = `
 		insert into message (author, content, created_at)
 		values ($1, $2, $3)

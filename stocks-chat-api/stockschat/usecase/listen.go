@@ -1,13 +1,13 @@
-package chat
+package usecase
 
 import (
 	"context"
-	"local/challengestockschat/stockschat/entity/chat"
+	"local/challengestockschat/stockschat/entity"
 )
 
 const listMessagesMax = 50
 
-func (u usecase) Listen(ctx context.Context, lis chat.Listener) (func(), error) {
+func (u usecase) Listen(ctx context.Context, lis entity.Listener) (func(), error) {
 	u.listeners.add(&lis)
 	cleanup := func() {
 		u.listeners.rm(&lis)

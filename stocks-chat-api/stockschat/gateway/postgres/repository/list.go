@@ -1,13 +1,13 @@
-package chat
+package repository
 
 import (
 	"context"
-	"local/challengestockschat/stockschat/entity/chat"
+	"local/challengestockschat/stockschat/entity"
 
 	"github.com/regismelgaco/go-sdks/erring"
 )
 
-func (r repository) ListMessages(ctx context.Context, limit int) ([]chat.Message, error) {
+func (r repo) ListMessages(ctx context.Context, limit int) ([]entity.Message, error) {
 	const sql = `
 		select author, created_at, content
 		from message
@@ -20,9 +20,9 @@ func (r repository) ListMessages(ctx context.Context, limit int) ([]chat.Message
 		return nil, erring.Wrap(err).Describe("failed to select messages from db while listing")
 	}
 
-	list := []chat.Message{}
+	list := []entity.Message{}
 	for rows.Next() {
-		var msg chat.Message
+		var msg entity.Message
 		if err := rows.Scan(&msg.Author, &msg.CreatedAt, &msg.Content); err != nil {
 			return nil, erring.Wrap(err).Describe("failed to scan message row while listing")
 		}

@@ -1,9 +1,9 @@
-package chat_test
+package repository_test
 
 import (
 	"context"
-	"local/challengestockschat/stockschat/entity/chat"
-	chatRepository "local/challengestockschat/stockschat/gateway/postgres/repository/chat"
+	"local/challengestockschat/stockschat/entity"
+	"local/challengestockschat/stockschat/gateway/postgres/repository"
 	"testing"
 	"time"
 
@@ -16,9 +16,9 @@ func Test_Chat_Repository_InsertMessage_Success(t *testing.T) {
 
 	pool := postgres.GetDB(t)
 
-	repo := chatRepository.NewRepository(pool)
+	repo := repository.New(pool)
 
-	arg := chat.Message{
+	arg := entity.Message{
 		Author:  "Douglas Adams",
 		Content: "42",
 	}
@@ -27,7 +27,7 @@ func Test_Chat_Repository_InsertMessage_Success(t *testing.T) {
 
 	assert.NoError(t, err)
 	if assert.WithinDuration(t, time.Now(), arg.CreatedAt, time.Minute) {
-		expected := chat.Message{
+		expected := entity.Message{
 			Author:    "Douglas Adams",
 			Content:   "42",
 			CreatedAt: arg.CreatedAt,

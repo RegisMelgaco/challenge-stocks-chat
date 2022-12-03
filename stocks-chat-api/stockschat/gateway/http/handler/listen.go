@@ -1,9 +1,9 @@
-package chat
+package handler
 
 import (
 	"context"
-	"local/challengestockschat/stockschat/entity/chat"
-	v1 "local/challengestockschat/stockschat/gateway/http/handler/chat/v1"
+	"local/challengestockschat/stockschat/entity"
+	v1 "local/challengestockschat/stockschat/gateway/http/handler/v1"
 	"net/http"
 	"time"
 
@@ -27,7 +27,7 @@ func (h Handler) Listen(w http.ResponseWriter, r *http.Request) {
 
 	logger := logger.FromContext(r.Context())
 
-	cleanup, err := h.u.Listen(r.Context(), func(m chat.Message) error {
+	cleanup, err := h.u.Listen(r.Context(), func(m entity.Message) error {
 		err := conn.WriteJSON(v1.ToMessangeOutput(m))
 
 		if err != nil {

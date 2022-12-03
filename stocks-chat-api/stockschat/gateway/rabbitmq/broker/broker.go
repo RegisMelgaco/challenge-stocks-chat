@@ -1,18 +1,19 @@
 package broker
 
 import (
-	"local/challengestockschat/stockschat/usecase/chat"
+	"local/challengestockschat/stockschat/usecase"
 
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/regismelgaco/go-sdks/erring"
 )
 
 type broker struct {
-	conn        *amqp.Connection
-	stocksQueue amqp.Queue
+	conn         *amqp.Connection
+	stocksQueue  amqp.Queue
+	messageQueue amqp.Queue
 }
 
-func New(conn *amqp.Connection) (chat.Broker, error) {
+func New(conn *amqp.Connection) (usecase.Broker, error) {
 	b := broker{conn: conn}
 
 	ch, err := b.getChannel()
@@ -21,6 +22,14 @@ func New(conn *amqp.Connection) (chat.Broker, error) {
 	}
 
 	b.stocksQueue, err = ch.QueueDeclare("requested_stock", true, false, false, false, nil)
+	if err != nil {
+		return nil, erring.Wrap(err).Describe("failed to create requested_stock queue")
+	}
+
+	b.messageQueue, err = ch.QueueDeclare("create_message", true, false, false, false, nil)
+	if err != nil {
+		return nil, erring.Wrap(err).Describe("failed to create create_message queue")
+	}
 
 	return b, nil
 }

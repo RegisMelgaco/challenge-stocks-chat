@@ -1,9 +1,9 @@
-package chat_test
+package repository_test
 
 import (
 	"context"
-	"local/challengestockschat/stockschat/entity/chat"
-	chatRepository "local/challengestockschat/stockschat/gateway/postgres/repository/chat"
+	"local/challengestockschat/stockschat/entity"
+	"local/challengestockschat/stockschat/gateway/postgres/repository"
 	"testing"
 
 	"github.com/regismelgaco/go-sdks/postgres"
@@ -20,8 +20,8 @@ func Test_Repository_Chat_List(t *testing.T) {
 	testCases := []struct {
 		name string
 		args
-		seed        []chat.Message
-		expected    []chat.Message
+		seed        []entity.Message
+		expected    []entity.Message
 		expectedErr error
 	}{
 		{
@@ -29,8 +29,8 @@ func Test_Repository_Chat_List(t *testing.T) {
 			args: args{
 				limit: 10,
 			},
-			seed:        []chat.Message{},
-			expected:    []chat.Message{},
+			seed:        []entity.Message{},
+			expected:    []entity.Message{},
 			expectedErr: nil,
 		},
 		{
@@ -38,7 +38,7 @@ func Test_Repository_Chat_List(t *testing.T) {
 			args: args{
 				limit: 1,
 			},
-			seed: []chat.Message{
+			seed: []entity.Message{
 				{
 					Author:    "sheldon",
 					Content:   "howdy",
@@ -50,7 +50,7 @@ func Test_Repository_Chat_List(t *testing.T) {
 					CreatedAt: time2,
 				},
 			},
-			expected: []chat.Message{
+			expected: []entity.Message{
 				{
 					Author:    "sheldon",
 					Content:   "bye",
@@ -69,7 +69,7 @@ func Test_Repository_Chat_List(t *testing.T) {
 				SeedMessageTable(t, pool, tc.seed)
 			}
 
-			repo := chatRepository.NewRepository(pool)
+			repo := repository.New(pool)
 
 			actual, err := repo.ListMessages(context.Background(), tc.args.limit)
 

@@ -1,13 +1,13 @@
-package chat
+package repository
 
 import (
 	"context"
-	"local/challengestockschat/stockschat/entity/chat"
+	"local/challengestockschat/stockschat/entity"
 
 	"github.com/regismelgaco/go-sdks/erring"
 )
 
-func (r repository) InsertMessage(ctx context.Context, msg *chat.Message) error {
+func (r repo) InsertMessage(ctx context.Context, msg *entity.Message) error {
 	const sql = `
 		insert into message (author, content)
 		values ($1, $2)

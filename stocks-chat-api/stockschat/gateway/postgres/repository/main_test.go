@@ -1,4 +1,4 @@
-package chat_test
+package repository_test
 
 import (
 	"local/challengestockschat/stockschat/gateway/postgres/migration"

@@ -3,8 +3,8 @@ package http
 import (
 	"encoding/json"
 	"local/challengestockschat/stockschat/config"
-	"local/challengestockschat/stockschat/gateway/http/handler/chat"
-	chatUsecase "local/challengestockschat/stockschat/usecase/chat"
+	"local/challengestockschat/stockschat/gateway/http/handler"
+	"local/challengestockschat/stockschat/usecase"
 	"net/http"
 	"time"
 
@@ -16,11 +16,11 @@ import (
 	"go.uber.org/zap"
 )
 
-func SetupRouter(logger *zap.Logger, pool *pgxpool.Pool, cfg config.Config, broker chatUsecase.Broker) chi.Router {
+func SetupRouter(logger *zap.Logger, pool *pgxpool.Pool, cfg config.Config, broker usecase.Broker) chi.Router {
 	r := chi.NewRouter()
 
 	authHandler := auth.NewHandler(pool, cfg.JWTSecret)
-	chatHandler := chat.NewHandler(pool, broker)
+	chatHandler := handler.NewHandler(pool, broker)
 
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)

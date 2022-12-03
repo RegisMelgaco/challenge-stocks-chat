@@ -2,7 +2,7 @@ package v1
 
 import (
 	"context"
-	"local/challengestockschat/stockschat/entity/chat"
+	"local/challengestockschat/stockschat/entity"
 	"time"
 
 	"github.com/regismelgaco/go-sdks/auth/auth/gateway/http/handler"
@@ -13,14 +13,14 @@ type InputMessage struct {
 	Content string `json:"content"`
 }
 
-func (i InputMessage) ToEntity(ctx context.Context) (chat.Message, error) {
+func (i InputMessage) ToEntity(ctx context.Context) (entity.Message, error) {
 	claims, err := handler.ClaimsFromContext(ctx)
 	if err != nil {
-		return chat.Message{}, erring.Wrap(err).
+		return entity.Message{}, erring.Wrap(err).
 			Describe("failed to get claims from context")
 	}
 
-	return chat.Message{
+	return entity.Message{
 		Content: i.Content,
 		Author:  claims.UserName,
 	}, nil
@@ -32,7 +32,7 @@ type OutputMessage struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
-func ToMessangeOutput(msg chat.Message) OutputMessage {
+func ToMessangeOutput(msg entity.Message) OutputMessage {
 	return OutputMessage{
 		Author:    msg.Author,
 		Content:   msg.Content,

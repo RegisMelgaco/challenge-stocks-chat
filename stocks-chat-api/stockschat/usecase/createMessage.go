@@ -1,11 +1,11 @@
-package chat
+package usecase
 
 import (
 	"context"
-	"local/challengestockschat/stockschat/entity/chat"
+	"local/challengestockschat/stockschat/entity"
 )
 
-func (u usecase) CreateMessage(ctx context.Context, msg *chat.Message) error {
+func (u usecase) CreateMessage(ctx context.Context, msg *entity.Message) error {
 	if msg.Content[0] == '/' {
 		err := u.broker.RequestBotCommand(ctx, msg.Content[1:])
 		if err != nil {
