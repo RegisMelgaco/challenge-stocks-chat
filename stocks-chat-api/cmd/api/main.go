@@ -2,17 +2,18 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"local/challengestockschat/stockschat/config"
 	stocksChatHTTP "local/challengestockschat/stockschat/gateway/http"
 	"local/challengestockschat/stockschat/gateway/postgres/migration"
 	"local/challengestockschat/stockschat/gateway/rabbitmq/broker"
+	"log"
 	"net/http"
 
 	"github.com/jackc/pgx/v4/pgxpool"
 	amqp "github.com/rabbitmq/amqp091-go"
 	authMigrate "github.com/regismelgaco/go-sdks/auth/auth/gateway/postgres/migrate"
 	"github.com/regismelgaco/go-sdks/erring"
+	"github.com/regismelgaco/go-sdks/logger"
 	"go.uber.org/zap"
 )
 
@@ -20,22 +21,16 @@ func main() {
 	cfg, err := config.Load()
 	if err != nil {
 		err = erring.Wrap(err).Describe("failed to load env configs")
-		fmt.Println(err)
+		log.Println(err.Error())
 
 		return
 	}
 
-	var logger *zap.Logger
-	if cfg.IsDev {
-		lCfg := zap.NewDevelopmentConfig()
-		lCfg.DisableStacktrace = true
-		lCfg.DisableCaller = true
+	logger, err := logger.New(cfg.IsDev)
+	if err != nil {
+		log.Println(err.Error())
 
-		logger, err = lCfg.Build()
-
-		erring.SplitStackFromLogs()
-	} else {
-		logger, err = zap.NewProduction()
+		return
 	}
 
 	if err != nil {

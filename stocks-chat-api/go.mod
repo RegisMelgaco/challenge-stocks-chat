@@ -19,13 +19,13 @@ require (
 	go.uber.org/zap v1.23.0
 )
 
-replace github.com/regismelgaco/go-sdks/auth => ../go-sdks/auth
+replace github.com/regismelgaco/go-sdks/auth => ../../go-sdks/auth
 
-replace github.com/regismelgaco/go-sdks/httpresp => ../go-sdks/httpresp
+replace github.com/regismelgaco/go-sdks/httpresp => ../../go-sdks/httpresp
 
-replace github.com/regismelgaco/go-sdks/erring => ../go-sdks/erring
+replace github.com/regismelgaco/go-sdks/erring => ../../go-sdks/erring
 
-replace github.com/regismelgaco/go-sdks/logger => ../go-sdks/logger
+replace github.com/regismelgaco/go-sdks/logger => ../../go-sdks/logger
 
 require (
 	github.com/Azure/go-ansiterm v0.0.0-20210617225240-d185dfc1b5a1 // indirect

@@ -5,6 +5,8 @@ import (
 
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/regismelgaco/go-sdks/erring"
+	"github.com/regismelgaco/go-sdks/logger"
+	"go.uber.org/zap"
 )
 
 func (b broker) RequestBotCommand(ctx context.Context, command string) error {
@@ -13,7 +15,15 @@ func (b broker) RequestBotCommand(ctx context.Context, command string) error {
 		return err
 	}
 
-	defer ch.Close()
+	defer func() {
+		err := ch.Close()
+		if err != nil {
+			logger := logger.FromContext(ctx)
+			_ = erring.Wrap(err).
+				Describe("failed to close channel of bot command request").
+				Log(logger, zap.ErrorLevel)
+		}
+	}()
 
 	p := amqp.Publishing{
 		DeliveryMode: amqp.Persistent,
