@@ -10,18 +10,32 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/cors"
 	"github.com/jackc/pgx/v4/pgxpool"
-	auth "github.com/regismelgaco/go-sdks/auth/auth/gateway/http/handler"
+	"github.com/regismelgaco/go-sdks/auth/auth/gateway/encryptor"
+	authHandler "github.com/regismelgaco/go-sdks/auth/auth/gateway/http/handler"
+	"github.com/regismelgaco/go-sdks/auth/auth/gateway/postgres/repository"
+	authUsecase "github.com/regismelgaco/go-sdks/auth/auth/usecase"
 	"github.com/regismelgaco/go-sdks/httpresp"
 	"go.uber.org/zap"
 )
 
-func SetupRouter(logger *zap.Logger, pool *pgxpool.Pool, cfg config.Config, broker usecase.Broker) chi.Router {
+func SetupRouter(logger *zap.Logger, pool *pgxpool.Pool, cfg config.Config, usecase usecase.Usecase) chi.Router {
 	r := chi.NewRouter()
 
-	authHandler := auth.NewHandler(pool, cfg.JWTSecret)
-	chatHandler := handler.NewHandler(pool, broker)
+	authorizer := authUsecase.NewUsecase(
+		encryptor.NewEncryptor(cfg.JWTSecret),
+		repository.NewUserRepository(pool),
+	)
+	chatHandler := handler.NewHandler(usecase, authorizer)
+	authHandler := authHandler.NewHandler(authorizer)
 
+	r.Use(cors.Handler(cors.Options{
+		AllowedOrigins:   []string{"*"},
+		AllowedMethods:   []string{"HEAD", "GET", "POST", "PUT"},
+		AllowedHeaders:   []string{"Access-Control-Allow-Origin", "Access-Control-Allow-Credentials", "Authorization"},
+		AllowCredentials: true,
+	}))
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.SetHeader(
@@ -30,7 +44,7 @@ func SetupRouter(logger *zap.Logger, pool *pgxpool.Pool, cfg config.Config, brok
 	r.Use(httpresp.Logger(logger))
 
 	r.With(middleware.Timeout(5*time.Minute)).Route("/auth", authHandler.SetupRoutes)
-	r.With(authHandler.IsAuthorized).Route("/chat", chatHandler.Route)
+	r.Route("/chat", chatHandler.Route)
 
 	r.With(authHandler.IsAuthorized).Get("/ping", func(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(map[string]string{"msg": "pong"})

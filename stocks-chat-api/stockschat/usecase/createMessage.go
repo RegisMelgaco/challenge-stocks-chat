@@ -3,11 +3,12 @@ package usecase
 import (
 	"context"
 	"local/challengestockschat/stockschat/entity"
+	"strings"
 )
 
 func (u usecase) CreateMessage(ctx context.Context, msg *entity.Message) error {
-	if msg.Content[0] == '/' {
-		err := u.broker.RequestBotCommand(ctx, msg.Content[1:])
+	if strings.HasPrefix(msg.Content, "/") {
+		err := u.broker.SendToRequestingBot(ctx, msg.Content[1:])
 		if err != nil {
 			return err
 		}
@@ -18,7 +19,7 @@ func (u usecase) CreateMessage(ctx context.Context, msg *entity.Message) error {
 		return err
 	}
 
-	u.listeners.send(*msg)
+	u.broker.SendToPublishingMessage(ctx, *msg)
 
 	return nil
 }

@@ -5,7 +5,9 @@ import (
 	"local/challengestockschat/stockschat/config"
 	stocksChatHTTP "local/challengestockschat/stockschat/gateway/http"
 	"local/challengestockschat/stockschat/gateway/postgres/migration"
+	"local/challengestockschat/stockschat/gateway/postgres/repository"
 	"local/challengestockschat/stockschat/gateway/rabbitmq/broker"
+	"local/challengestockschat/stockschat/usecase"
 	"log"
 	"net/http"
 
@@ -71,8 +73,27 @@ func main() {
 			Describe("failed to run migrations").
 			Log(logger, zap.PanicLevel)
 	}
+	usecase := usecase.New(repository.New(pgPool), broker)
 
-	router := stocksChatHTTP.SetupRouter(logger, pgPool, cfg, broker)
+	go func() {
+		logger.Info("started consuming from create messages queue")
+		if err = usecase.HandleCreateMessageQueue(logger); err != nil {
+			erring.Wrap(err).
+				Describe("stopped handling create messages request from queue").
+				Log(logger, zap.PanicLevel)
+		}
+	}()
+
+	go func() {
+		logger.Info("started consuming from publish messages queue")
+		if err = usecase.HandlePublishMessageQueue(logger); err != nil {
+			erring.Wrap(err).
+				Describe("stopped handling publish messages request from queue").
+				Log(logger, zap.PanicLevel)
+		}
+	}()
+
+	router := stocksChatHTTP.SetupRouter(logger, pgPool, cfg, usecase)
 
 	logger.Info("server listening")
 	if err = http.ListenAndServe(cfg.Host, router); err != nil {

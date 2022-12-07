@@ -14,10 +14,10 @@ github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZb
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/rabbitmq/amqp091-go v1.5.0 h1:VouyHPBu1CrKyJVfteGknGOGCzmOz0zcv/tONLkb7rg=
 github.com/rabbitmq/amqp091-go v1.5.0/go.mod h1:JsV0ofX5f1nwOGafb8L5rBItt9GyhfQfcJj+oyz0dGg=
-github.com/regismelgaco/go-sdks/erring v0.0.0-20221127113222-947ccd31e2bf h1:er/FU7TNZOMVV8ZrmGvbgaQ2ZgOjuAiXo/lFgXJr9ss=
-github.com/regismelgaco/go-sdks/erring v0.0.0-20221127113222-947ccd31e2bf/go.mod h1:/g1d/ekRRFec5WiV2F7qeVtGpDLpUH/Z0jq55Jg5fnk=
-github.com/regismelgaco/go-sdks/logger v0.0.0-20221130114229-1ef5f784373a h1:MI3EZqfPvGAfZa4QGIIJMUaMy4SlG7195q/DQUxW5sw=
-github.com/regismelgaco/go-sdks/logger v0.0.0-20221130114229-1ef5f784373a/go.mod h1:o/43JiFzLQGUvjVO47ozclctuFvqcjnUFyNKNwwrZPw=
+github.com/regismelgaco/go-sdks/erring v0.0.0-20221206163427-7665e01e2e39 h1:G5jxKrLn/8eSeLs75q7wFPWvh6TP4p8Q92P/tZymFWA=
+github.com/regismelgaco/go-sdks/erring v0.0.0-20221206163427-7665e01e2e39/go.mod h1:rObR3k1hinikGIp2hoVkcbpJgvX4xyvJQGHkartbfY4=
+github.com/regismelgaco/go-sdks/logger v0.0.0-20221203123604-f628b9964f6b h1:bXaPVsU/mV2fJ9V33CmexQqwVh3v1tzQeWLd4ywPAyU=
+github.com/regismelgaco/go-sdks/logger v0.0.0-20221203123604-f628b9964f6b/go.mod h1:o/43JiFzLQGUvjVO47ozclctuFvqcjnUFyNKNwwrZPw=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
 github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
@@ -26,7 +26,7 @@ github.com/yuin/goldmark v1.3.5/go.mod h1:mwnBkeHKe2W/ZEtQ+71ViKU8L12m81fl3OWwC1
 go.uber.org/atomic v1.7.0/go.mod h1:fEN4uk6kAWBTFdckzkM89CLk9XfWZrxpCo0nPH17wJc=
 go.uber.org/atomic v1.10.0 h1:9qC72Qh0+3MqyJbAn8YU5xVq1frD8bn3JtD2oXtafVQ=
 go.uber.org/atomic v1.10.0/go.mod h1:LUxbIzbOniOlMKjJjyPfpl4v+PKK2cNJn91OQbhoJI0=
-go.uber.org/goleak v1.1.11 h1:wy28qYRKZgnJTxGxvye5/wgWr1EKjmUDGYox5mGlRlI=
+go.uber.org/goleak v1.1.12 h1:gZAh5/EyT/HQwlpkCy6wTpqfH9H8Lz8zbm3dZh+OyzA=
 go.uber.org/goleak v1.1.12/go.mod h1:cwTWslyiVhfpKIDGSZEM2HlOvcqm+tG4zioyIeLoqMQ=
 go.uber.org/multierr v1.8.0 h1:dg6GjLku4EH+249NNmoIciG9N/jURbDG+pFlTkhzIC8=
 go.uber.org/multierr v1.8.0/go.mod h1:7EAYxJLBy9rStEaz58O2t4Uvip6FSURkq8/ppBp95ak=

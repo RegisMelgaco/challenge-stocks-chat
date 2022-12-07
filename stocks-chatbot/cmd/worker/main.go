@@ -29,7 +29,7 @@ func main() {
 
 	if err != nil {
 		_ = erring.Wrap(err).
-			Describe("failed to load env configs").
+			Describe("failed to create logger").
 			Log(logger, zap.PanicLevel)
 	}
 

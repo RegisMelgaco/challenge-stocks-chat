@@ -12,7 +12,7 @@ import (
 const handleCreateMessageQueueTimeout = 5 * time.Minute
 
 func (u usecase) HandleCreateMessageQueue(l *zap.Logger) error {
-	return u.broker.ConsumeCreateMessage(l, func(content string) error {
+	return u.broker.ConsumeCreatingMessage(l, func(content string) error {
 		ctx := logger.AddToCtx(context.Background(), l)
 		ctx, cancel := context.WithTimeout(ctx, handleCreateMessageQueueTimeout)
 		defer cancel()

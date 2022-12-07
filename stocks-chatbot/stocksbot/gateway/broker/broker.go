@@ -10,10 +10,15 @@ import (
 	"go.uber.org/zap"
 )
 
+const (
+	requestingBotQueue   = "requesting-bot"
+	creatingMessageQueue = "creating-message"
+)
+
 type broker struct {
-	conn                *amqp.Connection
-	requestedStockQueue amqp.Queue
-	createMessageQueue  amqp.Queue
+	conn            *amqp.Connection
+	requestingBot   amqp.Queue
+	creatingMessage amqp.Queue
 }
 
 func New(conn *amqp.Connection) (worker.Broker, error) {
@@ -24,14 +29,14 @@ func New(conn *amqp.Connection) (worker.Broker, error) {
 		return nil, err
 	}
 
-	b.requestedStockQueue, err = ch.QueueDeclare("requested_stock", true, false, false, false, amqp.Table{})
+	b.requestingBot, err = ch.QueueDeclare(requestingBotQueue, true, false, false, false, amqp.Table{})
 	if err != nil {
-		return nil, erring.Wrap(err).Describe("failed to create requested_stock queue")
+		return nil, erring.Wrap(err).Describe("failed to create requesting-bot queue")
 	}
 
-	b.createMessageQueue, err = ch.QueueDeclare("create_message", true, false, false, false, amqp.Table{})
+	b.creatingMessage, err = ch.QueueDeclare(creatingMessageQueue, true, false, false, false, amqp.Table{})
 	if err != nil {
-		return nil, erring.Wrap(err).Describe("failed to create create_message queue")
+		return nil, erring.Wrap(err).Describe("failed to create creating-message queue")
 	}
 
 	return b, nil
@@ -43,7 +48,7 @@ func (b *broker) ConsumeStocksRequests(ctx context.Context, handler func(string)
 		return err
 	}
 
-	msgs, err := ch.Consume(b.requestedStockQueue.Name, "", false, false, false, false, nil)
+	msgs, err := ch.Consume(b.requestingBot.Name, "", false, false, false, false, nil)
 	defer func() {
 		err := ch.Close()
 		if err != nil {
@@ -94,7 +99,7 @@ func (b *broker) CreateMessage(ctx context.Context, msg string) error {
 		Body:         []byte(msg),
 	}
 
-	err = ch.Publish("", b.createMessageQueue.Name, false, false, p)
+	err = ch.Publish("", b.creatingMessage.Name, false, false, p)
 	if err != nil {
 		return erring.Wrap(err).Describe("failed to deliver create message request")
 	}

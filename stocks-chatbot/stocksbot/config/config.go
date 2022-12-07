@@ -15,16 +15,14 @@ type Config struct {
 }
 
 func Load() (Config, error) {
-	err := godotenv.Load()
-	if err != nil {
+	if err := godotenv.Load(); err != nil {
 		err = erring.Wrap(err).Describe("failed while trying to load env vars")
 
 		log.Println(err)
 	}
 
 	var cfg Config
-	err = envconfig.Process(".", &cfg)
-	if err != nil {
+	if err := envconfig.Process(".", &cfg); err != nil {
 		return Config{}, erring.Wrap(err).Describe("failed while loading configs")
 	}
 

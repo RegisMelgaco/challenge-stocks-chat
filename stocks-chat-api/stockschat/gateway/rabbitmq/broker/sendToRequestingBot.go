@@ -9,7 +9,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func (b broker) RequestBotCommand(ctx context.Context, command string) error {
+func (b broker) SendToRequestingBot(ctx context.Context, command string) error {
 	ch, err := b.getChannel()
 	if err != nil {
 		return err
@@ -31,7 +31,7 @@ func (b broker) RequestBotCommand(ctx context.Context, command string) error {
 		Body:         []byte(command),
 	}
 
-	err = ch.PublishWithContext(ctx, "", b.stocksQueue.Name, false, false, p)
+	err = ch.PublishWithContext(ctx, "", b.requestingBot.Name, false, false, p)
 	if err != nil {
 		return erring.Wrap(err).Describe("failed to publish msg to stocks queue")
 	}

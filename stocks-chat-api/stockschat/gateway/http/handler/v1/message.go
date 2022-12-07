@@ -32,10 +32,13 @@ type OutputMessage struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
-func ToMessangeOutput(msg entity.Message) OutputMessage {
-	return OutputMessage{
-		Author:    msg.Author,
-		Content:   msg.Content,
-		CreatedAt: msg.CreatedAt,
+func ToMessangeOutput(msg entity.Message) Response {
+	return Response{
+		Type: "message",
+		Payload: OutputMessage{
+			Author:    msg.Author,
+			Content:   msg.Content,
+			CreatedAt: msg.CreatedAt,
+		},
 	}
 }

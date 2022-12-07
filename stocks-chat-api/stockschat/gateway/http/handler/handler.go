@@ -1,24 +1,22 @@
 package handler
 
 import (
-	"local/challengestockschat/stockschat/gateway/postgres/repository"
 	"local/challengestockschat/stockschat/usecase"
+	chatUsecase "local/challengestockschat/stockschat/usecase"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/gorilla/websocket"
-	"github.com/jackc/pgx/v4/pgxpool"
+	authUsecase "github.com/regismelgaco/go-sdks/auth/auth/usecase"
 )
 
 type Handler struct {
-	u        usecase.Usecase
-	upgrader websocket.Upgrader
+	u          chatUsecase.Usecase
+	upgrader   websocket.Upgrader
+	authorizer authUsecase.Usecase
 }
 
-func NewHandler(pool *pgxpool.Pool, broker usecase.Broker) Handler {
-	repo := repository.New(pool)
-	u := usecase.New(repo, broker)
-
-	return Handler{u, websocket.Upgrader{}}
+func NewHandler(u usecase.Usecase, authorizer authUsecase.Usecase) Handler {
+	return Handler{u, websocket.Upgrader{}, authorizer}
 }
 
 func (h Handler) Route(r chi.Router) {

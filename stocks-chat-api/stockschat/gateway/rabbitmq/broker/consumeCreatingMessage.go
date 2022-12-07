@@ -5,13 +5,13 @@ import (
 	"go.uber.org/zap"
 )
 
-func (b broker) ConsumeCreateMessage(logger *zap.Logger, handler func(msg string) error) error {
+func (b broker) ConsumeCreatingMessage(logger *zap.Logger, handler func(msg string) error) error {
 	ch, err := b.getChannel()
 	if err != nil {
 		return err
 	}
 
-	msgs, err := ch.Consume(b.messageQueue.Name, "", false, false, false, false, nil)
+	msgs, err := ch.Consume(b.creatingMessage.Name, "", false, false, false, false, nil)
 	defer func() {
 		err := ch.Close()
 		if err != nil {
