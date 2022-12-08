@@ -38,7 +38,7 @@ func (w worker) ProcessStocksRequest(l *zap.Logger) {
 }
 
 func (w worker) processOneStockRequest(ctx context.Context) error {
-	ctx, cancel := context.WithDeadline(ctx, time.Now().Add(5*time.Minute))
+	ctx, cancel := context.WithDeadline(ctx, time.Now().Add(15*time.Minute))
 	defer cancel()
 
 	return w.broker.ConsumeStocksRequests(ctx, func(command string) error {
@@ -50,7 +50,7 @@ func (w worker) processOneStockRequest(ctx context.Context) error {
 
 		evaluation, err := w.service.GetStockEvaluation(ctx, code)
 		if err != nil {
-			return err
+			return w.broker.CreateMessage(ctx, fmt.Sprintf("failed to request %s", code))
 		}
 
 		msg := fmt.Sprintf("code: %s | date: %s | high: %s | low: %s | volume: %v | open: %s | close: %s",

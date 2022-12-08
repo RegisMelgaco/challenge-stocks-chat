@@ -45,7 +45,7 @@ func main() {
 		_ = erring.Wrap(err).Log(logger, zap.PanicLevel)
 	}
 
-	service := service.New()
+	service := service.New(logger)
 
 	worker := worker.New(broker, service)
 

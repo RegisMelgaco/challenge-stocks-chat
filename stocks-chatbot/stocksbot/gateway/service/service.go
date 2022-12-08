@@ -8,22 +8,32 @@ import (
 	"local/stocksbot/stocksbot/entity"
 	"local/stocksbot/stocksbot/worker"
 	"net/http"
+	"time"
 
+	"github.com/hashicorp/go-retryablehttp"
 	"github.com/regismelgaco/go-sdks/erring"
+	"go.uber.org/zap"
 )
 
 type service struct {
-	client http.Client
+	client *retryablehttp.Client
 }
 
-func New() worker.StockService {
-	return &service{
-		client: http.Client{},
-	}
+func New(l *zap.Logger) worker.StockService {
+	client := retryablehttp.NewClient()
+
+	client.Backoff = retryablehttp.DefaultBackoff
+	client.RetryMax = 5
+	client.RetryWaitMax = 5 * time.Minute
+	client.RetryWaitMin = time.Second
+
+	client.Logger = &logger{l}
+
+	return &service{client}
 }
 
 func (s service) GetStockEvaluation(ctx context.Context, code string) (entity.StockEvaluation, error) {
-	req, err := http.NewRequest(
+	req, err := retryablehttp.NewRequest(
 		http.MethodGet,
 		fmt.Sprintf("https://stooq.com/q/l/?s=%s&f=sd2t2ohlcv&h&e=csv", code),
 		nil,
@@ -73,4 +83,33 @@ func (s service) GetStockEvaluation(ctx context.Context, code string) (entity.St
 		Close:  r[6],
 		Volume: r[7],
 	}, nil
+}
+
+type logger struct {
+	logger *zap.Logger
+}
+
+func (l *logger) parseFields(keysAndValues []interface{}) []zap.Field {
+	fields := make([]zap.Field, 0, len(keysAndValues)/2)
+	for i := 0; i < len(keysAndValues)/2; i++ {
+		fields = append(fields, zap.Any(keysAndValues[i*2].(string), keysAndValues[i*2+1]))
+	}
+
+	return fields
+}
+
+func (l *logger) Error(msg string, keysAndValues ...interface{}) {
+	l.logger.Error(msg, l.parseFields(keysAndValues)...)
+}
+
+func (l *logger) Info(msg string, keysAndValues ...interface{}) {
+	l.logger.Info(msg, l.parseFields(keysAndValues)...)
+}
+
+func (l *logger) Debug(msg string, keysAndValues ...interface{}) {
+	l.logger.Debug(msg, l.parseFields(keysAndValues)...)
+}
+
+func (l *logger) Warn(msg string, keysAndValues ...interface{}) {
+	l.logger.Warn(msg, l.parseFields(keysAndValues)...)
 }
