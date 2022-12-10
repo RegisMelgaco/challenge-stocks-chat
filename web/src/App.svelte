@@ -137,7 +137,7 @@
       />
 
       <button class="btn btn-success me-2" on:click={handleCreateMessage}
-        >Create</button
+        >Send</button
       >
     </form>
   </section>

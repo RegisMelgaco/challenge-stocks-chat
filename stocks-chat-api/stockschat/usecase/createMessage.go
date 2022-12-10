@@ -15,6 +15,8 @@ func (u usecase) CreateMessage(ctx context.Context, msg *entity.Message) error {
 		if err != nil {
 			return err
 		}
+
+		return nil
 	}
 
 	err := u.repo.InsertMessage(ctx, msg)

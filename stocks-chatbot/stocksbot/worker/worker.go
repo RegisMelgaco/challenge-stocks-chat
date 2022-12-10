@@ -55,13 +55,8 @@ func (w worker) processOneStockRequest(ctx context.Context) error {
 			return w.broker.CreateMessage(ctx, fmt.Sprintf("failed to request %s", code))
 		}
 
-		msg := fmt.Sprintf("code: %s | date: %s | high: %s | low: %s | volume: %v | open: %s | close: %s",
-			evaluation.Code,
-			evaluation.Time,
-			evaluation.High,
-			evaluation.Low,
-			evaluation.Volume,
-			evaluation.Open,
+		msg := fmt.Sprintf("%s quote is %.2f per share",
+			strings.ToUpper(evaluation.Code),
 			evaluation.Close,
 		)
 

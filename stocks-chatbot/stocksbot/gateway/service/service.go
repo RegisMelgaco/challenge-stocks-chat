@@ -8,6 +8,7 @@ import (
 	"local/stocksbot/stocksbot/entity"
 	"local/stocksbot/stocksbot/worker"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/hashicorp/go-retryablehttp"
@@ -76,14 +77,14 @@ func (s service) GetStockEvaluation(ctx context.Context, code string) (entity.St
 
 	r := rows[1]
 
+	stockClose, err := strconv.ParseFloat(r[6], 32)
+	if err != nil {
+		return entity.StockEvaluation{}, erring.Wrap(err).Describe("failed to parse stock close value")
+	}
+
 	return entity.StockEvaluation{
-		Code:   r[0],
-		Time:   fmt.Sprintf("%s %s", r[1], r[2]),
-		Open:   r[3],
-		High:   r[4],
-		Low:    r[5],
-		Close:  r[6],
-		Volume: r[7],
+		Code:  r[0],
+		Close: float32(stockClose),
 	}, nil
 }
 
