@@ -9,7 +9,7 @@ import (
 	v1 "local/challengestockschat/stockschat/gateway/http/handler/v1"
 
 	"github.com/gorilla/websocket"
-	"github.com/regismelgaco/go-sdks/auth/auth/gateway/http/handler"
+	authHandler "github.com/regismelgaco/go-sdks/auth/auth/gateway/http/handler"
 	"github.com/regismelgaco/go-sdks/erring"
 	"github.com/regismelgaco/go-sdks/httpresp"
 	loggerPkg "github.com/regismelgaco/go-sdks/logger"
@@ -133,5 +133,5 @@ func (h Handler) authorize(conn *websocket.Conn) (context.Context, error) {
 		return nil, err
 	}
 
-	return handler.AddClaimsToContext(context.Background(), claims), nil
+	return authHandler.AddClaimsToContext(context.Background(), claims), nil
 }
