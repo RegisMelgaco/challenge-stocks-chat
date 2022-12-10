@@ -42,11 +42,11 @@ func SetupRouter(logger *zap.Logger, pool *pgxpool.Pool, cfg config.Config, usec
 		AllowCredentials: true,
 	}))
 	r.Use(middleware.Recoverer)
-	r.Use(middleware.RequestID)
 	r.Use(middleware.SetHeader(
 		"Content-type", "application/json",
 	))
 	r.Use(httpresp.Logger(logger))
+	r.Use(httpresp.RequestID)
 
 	r.With(middleware.Timeout(timeout)).Route("/api/auth", authHandler.SetupRoutes)
 	r.Route("/api/chat", chatHandler.Route)
