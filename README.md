@@ -1,5 +1,11 @@
 # Go Challenge
 
+## Test instruction
+To run this project is only required docker and docker compose. To execute, simply execute:
+```sh
+docker compose up
+```
+
 ## Description
 
 This project is designed to test your knowledge of back-end web technologies, specifically in Go

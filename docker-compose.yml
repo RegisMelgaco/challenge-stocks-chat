@@ -5,16 +5,16 @@ services:
     ports:
       - 8080:8080
     depends_on:
-      - chat-api
+      - api
     healthcheck:
       test: curl -f http://nginx:8080
       interval: 5s
       timeout: 5s
       retries: 5
 
-  chat-api:
+  api:
     restart: always
-    build: stocks-chat-api
+    build: api
     ports:
       - 3000:3000
     environment:
@@ -34,10 +34,10 @@ services:
       timeout: 5s
       retries: 5
 
-  bot-worker:
+  bot:
     restart: always
     build: 
-      context: ./stocks-chatbot
+      context: ./bot
       dockerfile: dockerfile
     environment:
       POSTGRES_CONN: ${POSTGRES_CONN}
