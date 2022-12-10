@@ -2,9 +2,10 @@ package repository_test
 
 import (
 	"context"
+	"testing"
+
 	"local/challengestockschat/stockschat/entity"
 	"local/challengestockschat/stockschat/gateway/postgres/repository"
-	"testing"
 
 	"github.com/regismelgaco/go-sdks/postgres"
 	"github.com/stretchr/testify/assert"

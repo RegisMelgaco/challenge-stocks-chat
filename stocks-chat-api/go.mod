@@ -12,8 +12,8 @@ require (
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/rabbitmq/amqp091-go v1.5.0
 	github.com/regismelgaco/go-sdks/auth v0.0.0-20221206163427-7665e01e2e39
-	github.com/regismelgaco/go-sdks/erring v0.0.0-20221206163427-7665e01e2e39
-	github.com/regismelgaco/go-sdks/httpresp v0.0.0-20221206163427-7665e01e2e39
+	github.com/regismelgaco/go-sdks/erring v0.0.0-20221209234314-3552daa2d287
+	github.com/regismelgaco/go-sdks/httpresp v0.0.0-20221209234314-3552daa2d287
 	github.com/regismelgaco/go-sdks/logger v0.0.0-20221203123604-f628b9964f6b
 	github.com/regismelgaco/go-sdks/postgres v0.0.0-20221206163427-7665e01e2e39
 	github.com/stretchr/testify v1.8.1

@@ -1,44 +1,70 @@
 version: "3.9"
 services:
+  nginx:
+    build: web
+    ports:
+      - 8080:8080
+    depends_on:
+      - chat-api
+    healthcheck:
+      test: curl -f http://nginx:8080
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   chat-api:
+    restart: always
     build: stocks-chat-api
     ports:
       - 3000:3000
     environment:
       HOST: :3000
-      POSTGRES_CONN: postgres://postgres:postgres@postgres:5432/postgres?user=postgres&password=secret&sslmode=disable
-      JWT_SECRET: secr3t
-      RABBIT_MQ_CONN: amqp://guest:guest@rabbitmq:5672
-      IS_DEV: true
+      POSTGRES_CONN: ${POSTGRES_CONN}
+      JWT_SECRET: ${JWT_SECRET}
+      RABBIT_MQ_CONN: ${RABBIT_MQ_CONN}
+      IS_DEV: ${IS_DEV}
     depends_on:
-      - postgres
-      - rabbitmq
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    healthcheck:
+      test: curl -f http://chat-api:3000/api/healthcheck
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   bot-worker:
+    restart: always
     build: 
       context: ./stocks-chatbot
       dockerfile: dockerfile
     environment:
-      POSTGRES_CONN: postgres://postgres:postgres@postgres:5432/postgres?user=postgres&password=secret&sslmode=disable
-      RABBIT_MQ_CONN: amqp://guest:guest@rabbitmq:5672
-      IS_DEV: true
+      POSTGRES_CONN: ${POSTGRES_CONN}
+      RABBIT_MQ_CONN: ${RABBIT_MQ_CONN}
+      IS_DEV: ${IS_DEV}
     depends_on:
-      - postgres
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
 
   postgres:
     image: postgres:13.3
-    ports:
-      - 5432:5432
     environment:
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=secret
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   rabbitmq:
     image: rabbitmq:3.11-management
-    ports:
-      - 5672:5672
-      - 15672:15672
     volumes:
       - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 5s
+      timeout: 5s
+      retries: 5

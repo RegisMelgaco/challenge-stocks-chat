@@ -1,0 +1,13 @@
+run:
+  allow-parallel-runners: true
+  go: '1.18'
+    
+linters:
+  enable-all: true
+  fast: true
+  fix: true
+  disable:
+    - scopelint
+    - ifshort
+    - nosnakecase
+

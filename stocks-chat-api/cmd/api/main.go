@@ -2,14 +2,15 @@ package main
 
 import (
 	"context"
+	"log"
+	"net/http"
+
 	"local/challengestockschat/stockschat/config"
 	stocksChatHTTP "local/challengestockschat/stockschat/gateway/http"
 	"local/challengestockschat/stockschat/gateway/postgres/migration"
 	"local/challengestockschat/stockschat/gateway/postgres/repository"
 	"local/challengestockschat/stockschat/gateway/rabbitmq/broker"
 	"local/challengestockschat/stockschat/usecase"
-	"log"
-	"net/http"
 
 	"github.com/jackc/pgx/v4/pgxpool"
 	amqp "github.com/rabbitmq/amqp091-go"

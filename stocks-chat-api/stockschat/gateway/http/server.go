@@ -1,10 +1,6 @@
 package http
 
 import (
-	"encoding/json"
-	"local/challengestockschat/stockschat/config"
-	"local/challengestockschat/stockschat/gateway/http/handler"
-	"local/challengestockschat/stockschat/usecase"
 	"net/http"
 	"time"
 
@@ -18,6 +14,9 @@ import (
 	authUsecase "github.com/regismelgaco/go-sdks/auth/auth/usecase"
 	"github.com/regismelgaco/go-sdks/httpresp"
 	"go.uber.org/zap"
+	"local/challengestockschat/stockschat/config"
+	"local/challengestockschat/stockschat/gateway/http/handler"
+	"local/challengestockschat/stockschat/usecase"
 )
 
 func SetupRouter(logger *zap.Logger, pool *pgxpool.Pool, cfg config.Config, usecase usecase.Usecase) chi.Router {
@@ -27,28 +26,30 @@ func SetupRouter(logger *zap.Logger, pool *pgxpool.Pool, cfg config.Config, usec
 		encryptor.NewEncryptor(cfg.JWTSecret),
 		repository.NewUserRepository(pool),
 	)
-	chatHandler := handler.NewHandler(usecase, authorizer)
+	chatHandler := handler.NewHandler(usecase, authorizer, cfg.IsDev)
 	authHandler := authHandler.NewHandler(authorizer)
 
 	r.Use(cors.Handler(cors.Options{
-		AllowedOrigins:   []string{"*"},
-		AllowedMethods:   []string{"HEAD", "GET", "POST", "PUT"},
-		AllowedHeaders:   []string{"Access-Control-Allow-Origin", "Access-Control-Allow-Credentials", "Authorization"},
+		AllowedOrigins: []string{"*"},
+		AllowedMethods: []string{"HEAD", "GET", "POST", "PUT"},
+		AllowedHeaders: []string{
+			"Access-Control-Allow-Origin",
+			"Access-Control-Allow-Credentials",
+			"Authorization",
+		},
 		AllowCredentials: true,
 	}))
-	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
+	r.Use(middleware.RequestID)
 	r.Use(middleware.SetHeader(
 		"Content-type", "application/json",
 	))
 	r.Use(httpresp.Logger(logger))
 
-	r.With(middleware.Timeout(5*time.Minute)).Route("/auth", authHandler.SetupRoutes)
-	r.Route("/chat", chatHandler.Route)
+	r.With(middleware.Timeout(5*time.Minute)).Route("/api/auth", authHandler.SetupRoutes)
+	r.Route("/api/chat", chatHandler.Route)
 
-	r.With(authHandler.IsAuthorized).Get("/ping", func(w http.ResponseWriter, r *http.Request) {
-		json.NewEncoder(w).Encode(map[string]string{"msg": "pong"})
-	})
+	r.Get("/api/healthcheck", func(w http.ResponseWriter, r *http.Request) {})
 
 	return r
 }

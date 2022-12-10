@@ -2,9 +2,10 @@ package usecase
 
 import (
 	"context"
-	"local/challengestockschat/stockschat/entity"
 	"sync"
 	"time"
+
+	"local/challengestockschat/stockschat/entity"
 
 	"github.com/regismelgaco/go-sdks/erring"
 	"github.com/regismelgaco/go-sdks/logger"
@@ -46,7 +47,7 @@ func (u usecase) HandlePublishMessageQueue(l *zap.Logger) error {
 		for lis := range u.listeners.pool {
 			select {
 			case <-ctx.Done():
-				return erring.Wrap(entity.Timeout)
+				return erring.Wrap(entity.ErrTimeout)
 			default:
 				f := *lis
 				err := f(msg)

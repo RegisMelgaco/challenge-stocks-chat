@@ -3,14 +3,14 @@ package broker
 import (
 	"context"
 	"encoding/json"
-	"local/challengestockschat/stockschat/entity"
-	"local/challengestockschat/stockschat/usecase"
 	"time"
 
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/regismelgaco/go-sdks/erring"
 	"github.com/regismelgaco/go-sdks/logger"
 	"go.uber.org/zap"
+	"local/challengestockschat/stockschat/entity"
+	"local/challengestockschat/stockschat/usecase"
 )
 
 type broker struct {
@@ -75,7 +75,7 @@ func (b broker) getChannel() (*amqp.Channel, error) {
 type publishingMessage struct {
 	Author    string    `json:"author"`
 	Content   string    `json:"content"`
-	CreatedAt time.Time `json:"create_at"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
 func (b broker) SendToPublishingMessage(ctx context.Context, msg entity.Message) error {
@@ -102,7 +102,7 @@ func (b broker) SendToPublishingMessage(ctx context.Context, msg entity.Message)
 
 	p := amqp.Publishing{
 		DeliveryMode: amqp.Persistent,
-		ContentType:  "text/plain",
+		ContentType:  "application/json",
 		Body:         bytes,
 	}
 
@@ -131,12 +131,16 @@ func (b broker) ConsumePublishingMessages(logger *zap.Logger, handler func(msg e
 	}()
 
 	for d := range msgs {
-		var msg entity.Message
+		var msg publishingMessage
 		if err := json.Unmarshal(d.Body, &msg); err != nil {
 			return erring.Wrap(err).Describe("failed to unmarshal message from publishing messages queue")
 		}
 
-		err := handler(msg)
+		err := handler(entity.Message{
+			Author:    msg.Author,
+			Content:   msg.Content,
+			CreatedAt: msg.CreatedAt,
+		})
 		if err != nil {
 			nackErr := d.Nack(false, true)
 			if nackErr != nil {

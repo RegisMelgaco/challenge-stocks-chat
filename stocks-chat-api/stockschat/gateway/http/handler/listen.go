@@ -2,23 +2,22 @@ package handler
 
 import (
 	"context"
-	"local/challengestockschat/stockschat/entity"
-	v1 "local/challengestockschat/stockschat/gateway/http/handler/v1"
 	"net/http"
 	"time"
+
+	"local/challengestockschat/stockschat/entity"
+	v1 "local/challengestockschat/stockschat/gateway/http/handler/v1"
 
 	"github.com/gorilla/websocket"
 	"github.com/regismelgaco/go-sdks/auth/auth/gateway/http/handler"
 	"github.com/regismelgaco/go-sdks/erring"
 	"github.com/regismelgaco/go-sdks/httpresp"
-	"github.com/regismelgaco/go-sdks/logger"
+	loggerPkg "github.com/regismelgaco/go-sdks/logger"
 	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
 )
 
 var timeout = time.Minute
 
-// TODO: handle host origin
 func (h Handler) Listen(w http.ResponseWriter, r *http.Request) {
 	conn, err := h.upgrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -31,7 +30,7 @@ func (h Handler) Listen(w http.ResponseWriter, r *http.Request) {
 
 	defer conn.Close()
 
-	logger := logger.FromContext(r.Context())
+	logger := loggerPkg.FromContext(r.Context())
 
 	baseCtx, err := h.authorize(conn)
 	if err != nil {
@@ -40,9 +39,10 @@ func (h Handler) Listen(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	baseCtx = loggerPkg.AddToCtx(baseCtx, logger)
+
 	cleanup, err := h.u.Listen(baseCtx, func(m entity.Message) error {
 		err := conn.WriteJSON(v1.ToMessangeOutput(m))
-
 		if err != nil {
 			return erring.Wrap(err).Log(logger, zap.ErrorLevel)
 		}
@@ -59,12 +59,18 @@ func (h Handler) Listen(w http.ResponseWriter, r *http.Request) {
 
 	defer cleanup()
 
+	h.readMessages(baseCtx, conn)
+}
+
+func (h Handler) readMessages(ctx context.Context, conn *websocket.Conn) {
+	logger := loggerPkg.FromContext(ctx)
+
 	done := make(chan struct{})
 
 	go func() {
 		defer func() { done <- struct{}{} }()
 		for {
-			ctx, cancel := context.WithTimeout(baseCtx, timeout)
+			ctx, cancel := context.WithTimeout(ctx, timeout)
 			defer cancel()
 
 			var input v1.InputMessage
@@ -76,6 +82,10 @@ func (h Handler) Listen(w http.ResponseWriter, r *http.Request) {
 				conn.WriteJSON(v1.ToErrorOutput("invalid json"))
 
 				break
+			}
+
+			if input.Content == "" {
+				conn.WriteJSON(v1.ToErrorOutput("empty message not allowed"))
 			}
 
 			msg, err := input.ToEntity(ctx)
@@ -122,7 +132,4 @@ func (h Handler) authorize(conn *websocket.Conn) (context.Context, error) {
 	}
 
 	return handler.AddClaimsToContext(context.Background(), claims), nil
-}
-
-func handleError(logger *zap.Logger, lvl zapcore.Level, conn *websocket.Conn) {
 }

@@ -2,12 +2,12 @@ package repository_test
 
 import (
 	"context"
-	"local/challengestockschat/stockschat/entity"
 	"testing"
 	"time"
 
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/stretchr/testify/require"
+	"local/challengestockschat/stockschat/entity"
 )
 
 func SeedMessageTable(t *testing.T, pool *pgxpool.Pool, msgs []entity.Message) {

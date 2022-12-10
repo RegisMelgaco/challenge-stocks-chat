@@ -1,12 +1,13 @@
 package handler
 
 import (
-	"local/challengestockschat/stockschat/usecase"
-	chatUsecase "local/challengestockschat/stockschat/usecase"
+	"net/http"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/gorilla/websocket"
 	authUsecase "github.com/regismelgaco/go-sdks/auth/auth/usecase"
+	"local/challengestockschat/stockschat/usecase"
+	chatUsecase "local/challengestockschat/stockschat/usecase"
 )
 
 type Handler struct {
@@ -15,8 +16,14 @@ type Handler struct {
 	authorizer authUsecase.Usecase
 }
 
-func NewHandler(u usecase.Usecase, authorizer authUsecase.Usecase) Handler {
-	return Handler{u, websocket.Upgrader{}, authorizer}
+func NewHandler(u usecase.Usecase, authorizer authUsecase.Usecase, isDev bool) Handler {
+	upgrader := websocket.Upgrader{}
+
+	if isDev {
+		upgrader.CheckOrigin = func(r *http.Request) bool { return true }
+	}
+
+	return Handler{u, upgrader, authorizer}
 }
 
 func (h Handler) Route(r chi.Router) {

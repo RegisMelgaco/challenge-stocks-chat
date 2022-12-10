@@ -2,8 +2,11 @@ package usecase
 
 import (
 	"context"
-	"local/challengestockschat/stockschat/entity"
 	"strings"
+
+	"github.com/regismelgaco/go-sdks/logger"
+	"go.uber.org/zap"
+	"local/challengestockschat/stockschat/entity"
 )
 
 func (u usecase) CreateMessage(ctx context.Context, msg *entity.Message) error {
@@ -18,6 +21,8 @@ func (u usecase) CreateMessage(ctx context.Context, msg *entity.Message) error {
 	if err != nil {
 		return err
 	}
+
+	logger.FromContext(ctx).Debug("messsage created", zap.Any("msg", *msg))
 
 	u.broker.SendToPublishingMessage(ctx, *msg)
 

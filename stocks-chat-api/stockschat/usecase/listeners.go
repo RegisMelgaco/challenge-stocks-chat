@@ -1,8 +1,9 @@
 package usecase
 
 import (
-	"local/challengestockschat/stockschat/entity"
 	"sync"
+
+	"local/challengestockschat/stockschat/entity"
 )
 
 type listeners struct {
