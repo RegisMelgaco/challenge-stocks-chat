@@ -2,11 +2,11 @@ package usecase
 
 import (
 	"context"
+	"local/challengestockschat/stockschat/entity"
 	"strings"
 
 	"github.com/regismelgaco/go-sdks/logger"
 	"go.uber.org/zap"
-	"local/challengestockschat/stockschat/entity"
 )
 
 func (u usecase) CreateMessage(ctx context.Context, msg *entity.Message) error {

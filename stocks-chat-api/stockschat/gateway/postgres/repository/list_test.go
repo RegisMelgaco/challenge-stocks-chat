@@ -2,10 +2,9 @@ package repository_test
 
 import (
 	"context"
-	"testing"
-
 	"local/challengestockschat/stockschat/entity"
 	"local/challengestockschat/stockschat/gateway/postgres/repository"
+	"testing"
 
 	"github.com/regismelgaco/go-sdks/postgres"
 	"github.com/stretchr/testify/assert"
@@ -14,11 +13,37 @@ import (
 func Test_Repository_Chat_List(t *testing.T) {
 	t.Parallel()
 
-	type args struct {
-		limit int
-	}
+	for _, tc := range testCases() {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			pool := postgres.GetDB(t)
 
-	testCases := []struct {
+			if tc.seed != nil {
+				SeedMessageTable(t, pool, tc.seed)
+			}
+
+			repo := repository.New(pool)
+
+			actual, err := repo.ListMessages(context.Background(), tc.args.limit)
+
+			assert.ErrorIs(t, err, tc.expectedErr)
+			assert.Equal(t, tc.expected, actual)
+		})
+	}
+}
+
+type args struct {
+	limit int
+}
+
+func testCases() []struct {
+	name string
+	args
+	seed        []entity.Message
+	expected    []entity.Message
+	expectedErr error
+} {
+	return []struct {
 		name string
 		args
 		seed        []entity.Message
@@ -43,39 +68,22 @@ func Test_Repository_Chat_List(t *testing.T) {
 				{
 					Author:    "sheldon",
 					Content:   "howdy",
-					CreatedAt: time1,
+					CreatedAt: time1(),
 				},
 				{
 					Author:    "sheldon",
 					Content:   "bye",
-					CreatedAt: time2,
+					CreatedAt: time2(),
 				},
 			},
 			expected: []entity.Message{
 				{
 					Author:    "sheldon",
 					Content:   "bye",
-					CreatedAt: time2,
+					CreatedAt: time2(),
 				},
 			},
 			expectedErr: nil,
 		},
-	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(t *testing.T) {
-			pool := postgres.GetDB(t)
-
-			if tc.seed != nil {
-				SeedMessageTable(t, pool, tc.seed)
-			}
-
-			repo := repository.New(pool)
-
-			actual, err := repo.ListMessages(context.Background(), tc.args.limit)
-
-			assert.ErrorIs(t, err, tc.expectedErr)
-			assert.Equal(t, tc.expected, actual)
-		})
 	}
 }

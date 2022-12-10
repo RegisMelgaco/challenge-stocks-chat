@@ -49,6 +49,10 @@ func (b *broker) ConsumeStocksRequests(ctx context.Context, handler func(string)
 	}
 
 	msgs, err := ch.Consume(b.requestingBot.Name, "", false, false, false, false, nil)
+	if err != nil {
+		return erring.Wrap(err).Describe("failed to consume message from requesting_message")
+	}
+
 	defer func() {
 		err := ch.Close()
 		if err != nil {

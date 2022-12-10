@@ -2,11 +2,11 @@ package v1
 
 import (
 	"context"
+	"local/challengestockschat/stockschat/entity"
 	"time"
 
 	"github.com/regismelgaco/go-sdks/auth/auth/gateway/http/handler"
 	"github.com/regismelgaco/go-sdks/erring"
-	"local/challengestockschat/stockschat/entity"
 )
 
 type InputMessage struct {

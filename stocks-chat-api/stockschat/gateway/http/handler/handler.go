@@ -1,12 +1,13 @@
 package handler
 
 import (
+	"local/challengestockschat/stockschat/usecase"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/gorilla/websocket"
 	authUsecase "github.com/regismelgaco/go-sdks/auth/auth/usecase"
-	"local/challengestockschat/stockschat/usecase"
+
 	chatUsecase "local/challengestockschat/stockschat/usecase"
 )
 

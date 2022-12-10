@@ -1,12 +1,12 @@
 package usecase
 
 import (
+	"local/challengestockschat/stockschat/entity"
 	"time"
 
 	"github.com/regismelgaco/go-sdks/logger"
 	"go.uber.org/zap"
 	"golang.org/x/net/context"
-	"local/challengestockschat/stockschat/entity"
 )
 
 const handleCreateMessageQueueTimeout = 5 * time.Minute

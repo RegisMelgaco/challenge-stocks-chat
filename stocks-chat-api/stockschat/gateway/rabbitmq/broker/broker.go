@@ -3,14 +3,14 @@ package broker
 import (
 	"context"
 	"encoding/json"
+	"local/challengestockschat/stockschat/entity"
+	"local/challengestockschat/stockschat/usecase"
 	"time"
 
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/regismelgaco/go-sdks/erring"
 	"github.com/regismelgaco/go-sdks/logger"
 	"go.uber.org/zap"
-	"local/challengestockschat/stockschat/entity"
-	"local/challengestockschat/stockschat/usecase"
 )
 
 type broker struct {
@@ -99,6 +99,9 @@ func (b broker) SendToPublishingMessage(ctx context.Context, msg entity.Message)
 		CreatedAt: msg.CreatedAt,
 		Content:   msg.Content,
 	})
+	if err != nil {
+		return erring.Wrap(err).Describe("failed to decode publishing messsage")
+	}
 
 	p := amqp.Publishing{
 		DeliveryMode: amqp.Persistent,
@@ -121,6 +124,10 @@ func (b broker) ConsumePublishingMessages(logger *zap.Logger, handler func(msg e
 	}
 
 	msgs, err := ch.Consume(b.publishingMessage.Name, "", false, false, false, false, nil)
+	if err != nil {
+		return erring.Wrap(err).Describe("failed to consume publishingMessage queue")
+	}
+
 	defer func() {
 		err := ch.Close()
 		if err != nil {

@@ -22,9 +22,11 @@ type service struct {
 func New(l *zap.Logger) worker.StockService {
 	client := retryablehttp.NewClient()
 
+	const retryMax = 5 * time.Minute
+
 	client.Backoff = retryablehttp.DefaultBackoff
 	client.RetryMax = 5
-	client.RetryWaitMax = 5 * time.Minute
+	client.RetryWaitMax = retryMax
 	client.RetryWaitMin = time.Second
 
 	client.Logger = &logger{l}
@@ -90,9 +92,15 @@ type logger struct {
 }
 
 func (l *logger) parseFields(keysAndValues []interface{}) []zap.Field {
-	fields := make([]zap.Field, 0, len(keysAndValues)/2)
-	for i := 0; i < len(keysAndValues)/2; i++ {
-		fields = append(fields, zap.Any(keysAndValues[i*2].(string), keysAndValues[i*2+1]))
+	//nolint:gomnd
+	pairsCount := len(keysAndValues) / 2
+
+	fields := make([]zap.Field, 0, pairsCount)
+
+	for i := 0; i < pairsCount; i++ {
+		key, _ := keysAndValues[i*2].(string)
+
+		fields = append(fields, zap.Any(key, keysAndValues[i*2+1]))
 	}
 
 	return fields

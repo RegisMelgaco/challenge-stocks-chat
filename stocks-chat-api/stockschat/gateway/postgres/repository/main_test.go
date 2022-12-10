@@ -1,10 +1,9 @@
 package repository_test
 
 import (
+	"local/challengestockschat/stockschat/gateway/postgres/migration"
 	"os"
 	"testing"
-
-	"local/challengestockschat/stockschat/gateway/postgres/migration"
 
 	"github.com/regismelgaco/go-sdks/postgres"
 )

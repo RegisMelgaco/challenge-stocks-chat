@@ -1,11 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"local/stocksbot/stocksbot/config"
 	"local/stocksbot/stocksbot/gateway/broker"
 	"local/stocksbot/stocksbot/gateway/service"
 	"local/stocksbot/stocksbot/worker"
+	"log"
 
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/regismelgaco/go-sdks/erring"
@@ -16,15 +16,14 @@ import (
 func main() {
 	cfg, err := config.Load()
 	if err != nil {
-		err = erring.Wrap(err).Describe("failed to load env configs")
-		fmt.Println(err)
+		log.Panicln("failed to load configs: ", err)
 
 		return
 	}
 
 	logger, err := logger.New(cfg.IsDev)
 	if err != nil {
-		panic(err)
+		log.Panicln("failed to initiate logger: ", err)
 	}
 
 	if err != nil {

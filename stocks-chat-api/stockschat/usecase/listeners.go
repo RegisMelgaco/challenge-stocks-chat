@@ -1,9 +1,8 @@
 package usecase
 
 import (
-	"sync"
-
 	"local/challengestockschat/stockschat/entity"
+	"sync"
 )
 
 type listeners struct {
@@ -26,6 +25,7 @@ func (l *listeners) rm(lis *entity.Listener) {
 func (l *listeners) send(msg entity.Message) {
 	for lis := range l.pool {
 		f := *lis
+
 		err := f(msg)
 		if err != nil {
 			l.rm(lis)

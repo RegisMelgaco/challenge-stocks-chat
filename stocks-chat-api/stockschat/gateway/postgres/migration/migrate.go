@@ -8,6 +8,7 @@ import (
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	"github.com/golang-migrate/migrate/v4/source/httpfs"
+	authMigrate "github.com/regismelgaco/go-sdks/auth/auth/gateway/postgres/migrate"
 	"github.com/regismelgaco/go-sdks/erring"
 )
 
@@ -15,6 +16,11 @@ import (
 var migrationsFS embed.FS
 
 func Migrate(connectionStr string) error {
+	err := authMigrate.Migrate(connectionStr)
+	if err != nil {
+		return erring.Wrap(err).Describe("failed to run auth package migrations")
+	}
+
 	source, err := httpfs.New(http.FS(migrationsFS), ".")
 	if err != nil {
 		return erring.Wrap(err).Describe("failed to source migration files")

@@ -12,6 +12,10 @@ func (b broker) ConsumeCreatingMessage(logger *zap.Logger, handler func(msg stri
 	}
 
 	msgs, err := ch.Consume(b.creatingMessage.Name, "", false, false, false, false, nil)
+	if err != nil {
+		return erring.Wrap(err).Describe("failed to consume creatingMessage queue")
+	}
+
 	defer func() {
 		err := ch.Close()
 		if err != nil {

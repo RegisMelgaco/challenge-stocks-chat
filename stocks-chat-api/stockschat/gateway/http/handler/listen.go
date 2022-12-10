@@ -2,10 +2,10 @@ package handler
 
 import (
 	"context"
+	"local/challengestockschat/stockschat/entity"
 	"net/http"
 	"time"
 
-	"local/challengestockschat/stockschat/entity"
 	v1 "local/challengestockschat/stockschat/gateway/http/handler/v1"
 
 	"github.com/gorilla/websocket"
@@ -16,6 +16,7 @@ import (
 	"go.uber.org/zap"
 )
 
+//nolint:gochecknoglobals
 var timeout = time.Minute
 
 func (h Handler) Listen(w http.ResponseWriter, r *http.Request) {
@@ -69,6 +70,7 @@ func (h Handler) readMessages(ctx context.Context, conn *websocket.Conn) {
 
 	go func() {
 		defer func() { done <- struct{}{} }()
+
 		for {
 			ctx, cancel := context.WithTimeout(ctx, timeout)
 			defer cancel()
@@ -91,7 +93,7 @@ func (h Handler) readMessages(ctx context.Context, conn *websocket.Conn) {
 			msg, err := input.ToEntity(ctx)
 			if err != nil {
 				_ = erring.Wrap(err).
-					Describe("failed to encode message message as json").
+					Describe("failed to encode message as json").
 					Log(logger, zap.ErrorLevel)
 
 				conn.WriteJSON(v1.ToErrorOutput("internal server error"))

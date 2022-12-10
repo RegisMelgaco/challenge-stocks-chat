@@ -2,19 +2,18 @@ package main
 
 import (
 	"context"
-	"log"
-	"net/http"
-
 	"local/challengestockschat/stockschat/config"
-	stocksChatHTTP "local/challengestockschat/stockschat/gateway/http"
 	"local/challengestockschat/stockschat/gateway/postgres/migration"
 	"local/challengestockschat/stockschat/gateway/postgres/repository"
 	"local/challengestockschat/stockschat/gateway/rabbitmq/broker"
 	"local/challengestockschat/stockschat/usecase"
+	"log"
+	"net/http"
+
+	stocksChatHTTP "local/challengestockschat/stockschat/gateway/http"
 
 	"github.com/jackc/pgx/v4/pgxpool"
 	amqp "github.com/rabbitmq/amqp091-go"
-	authMigrate "github.com/regismelgaco/go-sdks/auth/auth/gateway/postgres/migrate"
 	"github.com/regismelgaco/go-sdks/erring"
 	"github.com/regismelgaco/go-sdks/logger"
 	"go.uber.org/zap"
@@ -29,6 +28,10 @@ func main() {
 		return
 	}
 
+	if err != nil {
+		log.Panicln("failed to load env configs", err)
+	}
+
 	logger, err := logger.New(cfg.IsDev)
 	if err != nil {
 		log.Println(err.Error())
@@ -36,12 +39,10 @@ func main() {
 		return
 	}
 
-	if err != nil {
-		_ = erring.Wrap(err).
-			Describe("failed to load env configs").
-			Log(logger, zap.PanicLevel)
-	}
+	start(logger, cfg)
+}
 
+func start(logger *zap.Logger, cfg config.Config) {
 	amqpConn, err := amqp.Dial(cfg.RabbitMQConn)
 	if err != nil {
 		_ = erring.Wrap(err).
@@ -61,24 +62,19 @@ func main() {
 			Log(logger, zap.PanicLevel)
 	}
 
-	err = authMigrate.Migrate(cfg.PostgresConn)
-	if err != nil {
-		erring.Wrap(err).
-			Describe("failed to run auth module migrations").
-			Log(logger, zap.PanicLevel)
-	}
-
 	err = migration.Migrate(cfg.PostgresConn)
 	if err != nil {
 		erring.Wrap(err).
 			Describe("failed to run migrations").
 			Log(logger, zap.PanicLevel)
 	}
+
 	usecase := usecase.New(repository.New(pgPool), broker)
 
 	go func() {
 		logger.Info("started consuming from create messages queue")
-		if err = usecase.HandleCreateMessageQueue(logger); err != nil {
+
+		if err := usecase.HandleCreateMessageQueue(logger); err != nil {
 			erring.Wrap(err).
 				Describe("stopped handling create messages request from queue").
 				Log(logger, zap.PanicLevel)
@@ -87,7 +83,8 @@ func main() {
 
 	go func() {
 		logger.Info("started consuming from publish messages queue")
-		if err = usecase.HandlePublishMessageQueue(logger); err != nil {
+
+		if err := usecase.HandlePublishMessageQueue(logger); err != nil {
 			erring.Wrap(err).
 				Describe("stopped handling publish messages request from queue").
 				Log(logger, zap.PanicLevel)
@@ -97,7 +94,8 @@ func main() {
 	router := stocksChatHTTP.SetupRouter(logger, pgPool, cfg, usecase)
 
 	logger.Info("server listening")
-	if err = http.ListenAndServe(cfg.Host, router); err != nil {
+
+	if err := http.ListenAndServe(cfg.Host, router); err != nil {
 		erring.Wrap(err).
 			Describe("server exit with error").
 			Log(logger, zap.PanicLevel)

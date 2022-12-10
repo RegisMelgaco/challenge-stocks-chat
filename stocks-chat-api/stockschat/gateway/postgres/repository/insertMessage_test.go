@@ -2,11 +2,10 @@ package repository_test
 
 import (
 	"context"
-	"testing"
-	"time"
-
 	"local/challengestockschat/stockschat/entity"
 	"local/challengestockschat/stockschat/gateway/postgres/repository"
+	"testing"
+	"time"
 
 	"github.com/regismelgaco/go-sdks/postgres"
 	"github.com/stretchr/testify/assert"
@@ -27,6 +26,7 @@ func Test_Chat_Repository_InsertMessage_Success(t *testing.T) {
 	err := repo.InsertMessage(context.Background(), &arg)
 
 	assert.NoError(t, err)
+
 	if assert.WithinDuration(t, time.Now(), arg.CreatedAt, time.Minute) {
 		expected := entity.Message{
 			Author:    "Douglas Adams",

@@ -2,7 +2,6 @@ package repository
 
 import (
 	"context"
-
 	"local/challengestockschat/stockschat/entity"
 
 	"github.com/regismelgaco/go-sdks/erring"
@@ -22,6 +21,7 @@ func (r repo) ListMessages(ctx context.Context, limit int) ([]entity.Message, er
 	}
 
 	list := []entity.Message{}
+
 	for rows.Next() {
 		var msg entity.Message
 		if err := rows.Scan(&msg.Author, &msg.CreatedAt, &msg.Content); err != nil {

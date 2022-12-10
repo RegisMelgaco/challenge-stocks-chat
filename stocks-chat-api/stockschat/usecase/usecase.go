@@ -2,10 +2,9 @@ package usecase
 
 import (
 	"context"
+	"local/challengestockschat/stockschat/entity"
 	"sync"
 	"time"
-
-	"local/challengestockschat/stockschat/entity"
 
 	"github.com/regismelgaco/go-sdks/erring"
 	"github.com/regismelgaco/go-sdks/logger"
@@ -36,7 +35,7 @@ func New(repo Repository, broker Broker) Usecase {
 	return u
 }
 
-var timeout = time.Minute
+const timeout = time.Minute
 
 func (u usecase) HandlePublishMessageQueue(l *zap.Logger) error {
 	return u.broker.ConsumePublishingMessages(l, func(msg entity.Message) error {

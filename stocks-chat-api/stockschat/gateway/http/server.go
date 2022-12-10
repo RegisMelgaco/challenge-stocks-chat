@@ -1,6 +1,9 @@
 package http
 
 import (
+	"local/challengestockschat/stockschat/config"
+	"local/challengestockschat/stockschat/gateway/http/handler"
+	"local/challengestockschat/stockschat/usecase"
 	"net/http"
 	"time"
 
@@ -14,10 +17,9 @@ import (
 	authUsecase "github.com/regismelgaco/go-sdks/auth/auth/usecase"
 	"github.com/regismelgaco/go-sdks/httpresp"
 	"go.uber.org/zap"
-	"local/challengestockschat/stockschat/config"
-	"local/challengestockschat/stockschat/gateway/http/handler"
-	"local/challengestockschat/stockschat/usecase"
 )
+
+const timeout = 5 * time.Minute
 
 func SetupRouter(logger *zap.Logger, pool *pgxpool.Pool, cfg config.Config, usecase usecase.Usecase) chi.Router {
 	r := chi.NewRouter()
@@ -46,7 +48,7 @@ func SetupRouter(logger *zap.Logger, pool *pgxpool.Pool, cfg config.Config, usec
 	))
 	r.Use(httpresp.Logger(logger))
 
-	r.With(middleware.Timeout(5*time.Minute)).Route("/api/auth", authHandler.SetupRoutes)
+	r.With(middleware.Timeout(timeout)).Route("/api/auth", authHandler.SetupRoutes)
 	r.Route("/api/chat", chatHandler.Route)
 
 	r.Get("/api/healthcheck", func(w http.ResponseWriter, r *http.Request) {})

@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"context"
-
 	"local/challengestockschat/stockschat/entity"
 
 	"go.uber.org/zap"
